@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Button Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-left {
+            background: linear-gradient(45deg, #ff0000, #e01a66);
+        }
+
+        .btn-right {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .result-page {
+            text-align: center;
+        }
+
+        .result-page img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .result-page h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .result-page p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            margin-top: 20px;
+        }
+
+        /* Animation for growing/shrinking buttons */
+        .grow {
+            animation: growAnimation 0.3s ease;
+        }
+
+        .shrink {
+            animation: shrinkAnimation 0.3s ease;
+        }
+
+        @keyframes growAnimation {
+            from { transform: scale(var(--current-scale-left, 1)); }
+            to { transform: scale(var(--target-scale-left, 1.3)); }
+        }
+
+        @keyframes shrinkAnimation {
+            from { transform: scale(var(--current-scale-right, 1)); }
+            to { transform: scale(var(--target-scale-right, 0.7)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- หน้าแรก -->
+        <div id="mainPage">
+            <h1>คิดถึงเค้าบ้างงมั้ยค้าบบ</h1>
+            <img src="12.webp" style="width: 200px; height: 200px; margin-bottom: -50px; margin-top: -50px;" alt="">
+          
+            
+            <div class="button-container">
+                <button id="leftBtn" class="btn btn-left">คิดถึง</button>
+                <button id="rightBtn" class="btn btn-right">ไม่คิดถึง</button>
+            </div>
+        </div>
+
+        <!-- หน้าผลลัพธ์ -->
+        <div id="resultPage" class="hidden">
+            <div class="result-page">
+                <h2>คิดถึงม้ายยไม่รู้แต่เค้า คิดถึงเธอนะค้าบบ ❤</h2>
+                <img src="887.jpg" alt="ภาพตัวอย่าง">
+                <p>
+                    เค้ารักอ้วนๆนะค้าบบ รักมากๆที่สุดในโลกเลยย ไอเหม่งงของเค้าา ❤
+                </p>
+                <p>
+                    เค้าอยากให้อ้วนๆกลับมาานะค้าบบ✨
+                </p>
+                <button id="backBtn" class="btn back-btn">กลับหน้าแรก</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let rightClickCount = 0;
+        const maxClicks = 2; // เปลี่ยนจาก 5 เป็น 2
+
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+        const mainPage = document.getElementById('mainPage');
+        const resultPage = document.getElementById('resultPage');
+        const backBtn = document.getElementById('backBtn');
+
+        // เมื่อกดปุ่มขวา
+        rightBtn.addEventListener('click', function() {
+            rightClickCount++;
+            
+            // คำนวณขนาดใหม่
+            const leftScale = 1 + (rightClickCount * 0.3); // ปุ่มซ้ายโตขึ้น
+            const rightScale = 1 - (rightClickCount * 0.3); // ปุ่มขวาเล็กลง
+            
+            // ตั้งค่า CSS variables สำหรับ animation
+            document.documentElement.style.setProperty('--current-scale-left', leftBtn.style.transform.replace(/scale\(([^)]+)\)/, '$1') || '1');
+            document.documentElement.style.setProperty('--target-scale-left', leftScale);
+            document.documentElement.style.setProperty('--current-scale-right', rightBtn.style.transform.replace(/scale\(([^)]+)\)/, '$1') || '1');
+            document.documentElement.style.setProperty('--target-scale-right', rightScale);
+            
+            // เพิ่ม animation classes
+            leftBtn.classList.add('grow');
+            rightBtn.classList.add('shrink');
+            
+            // ลบ animation classes หลังจบ animation และตั้งขนาดใหม่
+            setTimeout(() => {
+                leftBtn.classList.remove('grow');
+                rightBtn.classList.remove('shrink');
+                leftBtn.style.transform = `scale(${leftScale})`;
+                rightBtn.style.transform = `scale(${rightScale})`;
+            }, 300);
+
+            // ถ้ากดครบ 2 ครั้ง ให้ซ่อนปุ่มขวา
+            if (rightClickCount >= maxClicks) {
+                setTimeout(() => {
+                    rightBtn.style.opacity = '0';
+                    rightBtn.style.transform = 'scale(0)';
+                    
+                    setTimeout(() => {
+                        rightBtn.classList.add('hidden');
+                    }, 300);
+                }, 300);
+            }
+        });
+
+        // เมื่อกดปุ่มซ้าย
+        leftBtn.addEventListener('click', function() {
+            mainPage.classList.add('hidden');
+            resultPage.classList.remove('hidden');
+        });
+
+        // เมื่อกดปุ่มกลับ
+        backBtn.addEventListener('click', function() {
+            // รีเซ็ตทุกอย่าง
+            rightClickCount = 0;
+            leftBtn.style.transform = 'scale(1)';
+            rightBtn.style.opacity = '1';
+            rightBtn.style.transform = 'scale(1)';
+            rightBtn.classList.remove('hidden');
+            
+            // กลับไปหน้าแรก
+            resultPage.classList.add('hidden');
+            mainPage.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
